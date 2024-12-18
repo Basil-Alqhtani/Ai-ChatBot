@@ -6,6 +6,33 @@ This AI-powered chatbot is trained to provide accurate information and answer qu
 ## 📝 Project Overview
 
 This is a full-stack AI chatbot application built with Node.js, Express, MongoDB, and OpenAI's Assistant API. The application provides user authentication and an AI-powered conversational interface.
+## 🚀 Installation Steps
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/basil-alqhtani/Ai-chatbot.git
+
+```
+
+### 2. Install Dependencies
+```bash
+npm install
+```
+
+### 3. Environment Configuration
+Create a `.env` file in the root directory with the following variables:
+```
+OPENAI_API_KEY=your_openai_api_key
+ASSISTANT_ID=your_openai_assistant_id
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+```
+
+### 4. Run the Application
+```bash
+npm start
+```
+
 
 ## 🔑 Account Prerequisites
 
@@ -90,32 +117,7 @@ This is a full-stack AI chatbot application built with Node.js, Express, MongoDB
 - OpenAI API key
 - Git
 
-## 🚀 Installation Steps
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/yourusername/smart-chat.git
-cd smart-chat
-```
-
-### 2. Install Dependencies
-```bash
-npm install
-```
-
-### 3. Environment Configuration
-Create a `.env` file in the root directory with the following variables:
-```
-OPENAI_API_KEY=your_openai_api_key
-ASSISTANT_ID=your_openai_assistant_id
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-```
-
-### 4. Run the Application
-```bash
-npm start
-```
 
 ## 🔐 Authentication Endpoints
 
