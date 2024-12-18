@@ -10,7 +10,7 @@ This is a full-stack AI chatbot application built with Node.js, Express, MongoDB
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/basil-alqhtani/Ai-chatbot.git
+https://github.com/Basil-Alqhtani/Ai-ChatBot.git
 
 ```
 
