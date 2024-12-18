@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <button id="themeToggle" class="theme-toggle">
+        <i class="fas fa-moon"></i>
+    </button>
+    <div id="userEmail" style="position: fixed; top: 20px; right: 200px; background: var(--container-bg-light); color: var(--text-color-light); padding: 10px 20px; border-radius: 5px; font-size: 0.9em; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);">
+        <i class="fas fa-user"></i>
+        <span></span>
+    </div>
+    <button id="logoutButton" class="logout-button">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+    <div class="chat-container">
+        <h1 id="smart-chat" style="font-size: 1.5em;">دليل المتدرب الذكي</h1>
+        
+        <div id="chatWindow">
+            <div class="start-chat-container">
+                <button id="startChatBtn"><i class="fas fa-robot"></i> ابدأ المحادثة</button>
+            </div>
+            <div id="suggestions" class="suggestions" style="display: none;">
+                <p>إليك بعض الأسئلة المقترحة للبدء:</p>
+                <div id="suggestionButtons" class="suggestion-buttons">
+                    <!-- Suggestion buttons will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="userMessage" placeholder="اضغط على 'ابدأ المحادثة' لبدء الدردشة..." disabled>
+            <button id="reopenSuggestions" class="reopen-suggestions" title="Show suggestions"><i class="fas fa-lightbulb"></i></button>
+            <button id="sendButton" disabled><i class="fas fa-paper-plane"></i></button>
+        </div>
+
+        <div class="disclaimer">
+            <i class="fas fa-info-circle"></i>
+            <span>ملاحظة: المساعد الذكي قد يخطئ أحياناً. يرجى التحقق من المعلومات المهمة</span>
+        </div>
+        <div id="cooldownTimer" style="text-align: center; color: #ff4444; margin: 10px 0; display: none;"></div>
+    </div>
+
+    <script>
+        let threadId = null;
+        const chatWindow = document.getElementById('chatWindow');
+        const suggestionsContainer = document.getElementById('suggestions');
+        const suggestionButtons = document.getElementById('suggestionButtons');
+        const inputArea = document.querySelector('.input-area');
+        const startChatBtn = document.getElementById('startChatBtn');
+        const userMessageInput = document.getElementById('userMessage');
+        const sendButton = document.getElementById('sendButton');
+        const reopenSuggestionsButton = document.getElementById('reopenSuggestions');
+
+        // Predefined suggestion topics
+        const suggestionTopics = [
+            "كيف يمكنني إضافة مقرر إذا لم أتمكن من ذلك عبر الإنترنت؟",
+            "متى يتم صرف المكافآت للطلاب المستجدين؟",
+            "كيف أستطيع إعادة تعيين كلمة مرور البريد الإلكتروني؟",
+            "أين أجد الخطة التدريبية التفصيلية لتخصصي؟",
+            "من هو رئيس قسم الحاسب؟",
+            "كيف أستعيد اسم المستخدم أو الرقم الأكاديمي؟",
+            "متى موعد المكافأة؟",
+            "كيف احصل على المواد المتبقية؟",
+            "هل يوجد قبول الفصل الثاني ومتى وماهي الشروط؟",
+            "ما هي آلية اجتياز الاختبار النهائي؟",
+            "كيف يتم تقديم طلب الإعفاء من مقرر التدريب التعاوني؟",
+            "ما هو الزي الرسمي المطلوب للمتدربين؟",
+            "كيف يعمل برنامج نقاط المتدربين؟",
+            "ما هي القرارات التدريبية التي يجب على المتدربين معرفتها؟",
+            "ما هي الإرشادات المتبعة عند تسجيل الدخول للتدريب؟",
+            "كيف يتم تحديد مقرات الاختبارات؟",
+            "ما هي شروط القبول ومتطلبات السكن للكلية؟",
+            "كيف يتم تفعيل بريد المتدرب الرسمي على الجوال؟",
+            "ما هي خطوات تقديم الطلبات على نظام رايات؟",
+            "ما هي ضوابط التقييم والاختبارات؟",
+            "كيف يتم تقديم اعتراض على درجة التقييم النهائي؟",
+            "ما هي الأجهزة الإلكترونية المحظورة أثناء الاختبارات؟",
+            "ما هي مميزات منصة خدمات المتدربين؟",
+            "كيف يمكن التواصل مع الكلية؟",
+            "ما هي حسابات الكلية على وسائل التواصل الاجتماعي؟",
+            "كيف أتواصل مع شؤون المتدربين خارج الدوام؟",
+            "ما هو إيميل القبول والتسجيل؟",
+            "ما هو رقم واتساب الكلية؟",
+            "ما هي خطوات تحديث الآيبان؟",
+            "كم تستغرق معاملة تحديث الآيبان؟",
+            "ما هي شروط تحديث الآيبان؟",
+            "ما هي تخصصات قسم الاتصالات؟",
+            "ما هي مواد تخصص هندسة الاتصالات؟",
+            "كم عدد ساعات تخصص تقنية الاتصالات؟",
+            "ما هي تخصصات قسم الحاسب؟",
+            "ما هي مواد تخصص هندسة الشبكات؟",
+            "كم عدد ساعات تخصص الأمن السيبراني؟",
+            "ما هي تخصصات قسم الإلكترونيات؟",
+            "ما هي مواد تخصص هندسة الإلكترونيات؟",
+        ];
+
+        // Function to shuffle array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to get random suggestions
+        function getRandomSuggestions() {
+            return shuffleArray([...suggestionTopics]).slice(0, 13);
+        }
+
+        // Function to create suggestion buttons
+        function createSuggestionButtons() {
+            const suggestionButtons = document.getElementById('suggestionButtons');
+            suggestionButtons.innerHTML = ''; // Clear existing buttons
+            
+            const randomSuggestions = getRandomSuggestions();
+            
+            randomSuggestions.forEach(topic => {
+                const button = document.createElement('button');
+                button.textContent = topic;
+                button.onclick = () => {
+                    document.getElementById('userMessage').value = topic;
+                    document.getElementById('suggestions').style.display = 'none';
+                    document.getElementById('suggestions').classList.remove('visible');
+                    if (!document.getElementById('userMessage').disabled) {
+                        document.getElementById('sendButton').click();
+                    }
+                };
+                suggestionButtons.appendChild(button);
+            });
+        }
+
+        // Function to format bot messages
+        function formatBotMessage(message) {
+            // Remove text inside 【】 brackets
+            message = message.replace(/【[^】]*】/g, '');
+            
+            // Convert **bold text** to <strong> with a specific style
+            message = message.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #2563eb; font-weight: 600;">$1</strong>');
+            
+            // Function to extract Google Drive file ID from various link formats
+            function extractDriveFileId(url) {
+                let id = null;
+                
+                // Remove any URL parameters (like ?usp=drive_link)
+                url = url.split('?')[0];
+                
+                // Format: /file/d/ID/view
+                const fileViewMatch = url.match(/\/file\/d\/([^\/]+)(?:\/view)?/);
+                if (fileViewMatch) {
+                    id = fileViewMatch[1];
+                }
+                
+                // Format: id=ID
+                const idMatch = url.match(/[?&]id=([^&]+)/);
+                if (idMatch) {
+                    id = idMatch[1];
+                }
+                
+                return id ? id.replace(/\)$/, '') : null; // Remove trailing parenthesis if present
+            }
+            
+            // Function to clean URL from extra characters
+            function cleanUrl(url) {
+                // Remove trailing punctuation and parentheses
+                return url.replace(/[.,!?;:)\]}>]+$/, '');
+            }
+
+            // Convert Google Drive image links to embedded images
+            message = message.replace(
+                /https:\/\/drive\.google\.com\/[^\s]+/g,
+                (match) => {
+                    const cleanedUrl = cleanUrl(match);
+                    const fileId = extractDriveFileId(cleanedUrl);
+                    
+                    if (fileId) {
+                        return `<a href="${cleanedUrl}" target="_blank"><img src="https://drive.google.com/uc?export=view&id=${fileId}&sz=w2000-h2000" class="chat-image" alt="صورة" loading="lazy" onerror="this.onerror=null; this.src='https://drive.google.com/thumbnail?id=${fileId}&sz=w1000'; this.classList.add('thumbnail');"></a>`;
+                    }
+                    return match;
+                }
+            );
+            
+            // Convert other links to clickable "اضغط هنا" text with styling
+            message = message.replace(
+                /(https?:\/\/(?!drive\.google\.com)[^\s]+)/g,
+                (match) => {
+                    const cleanedUrl = cleanUrl(match);
+                    return `<a href="${cleanedUrl}" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 500;">اضغط هنا</a>`;
+                }
+            );
+            
+            // Add line breaks for better readability
+            message = message.replace(/\n/g, '<br>');
+            
+            return message;
+        }
+
+        // Function to show loading spinner
+        function showLoading() {
+            // Remove any existing loading spinner
+            const existingSpinner = chatWindow.querySelector('.loading');
+            if (existingSpinner) existingSpinner.remove();
+
+            // Create new loading spinner
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('loading');
+            loadingDiv.innerHTML = '<div class="spinner"></div>';
+            chatWindow.appendChild(loadingDiv);
+        }
+
+        // Function to remove loading spinner
+        function removeLoading() {
+            const existingSpinner = chatWindow.querySelector('.loading');
+            if (existingSpinner) existingSpinner.remove();
+        }
+
+        // Function to display a message in the chat
+        function displayMessage(sender, text) {
+            const messageDiv = document.createElement('p');
+            messageDiv.classList.add('chat-message', sender.toLowerCase());
+            
+            // If it's a bot message, use HTML formatting
+            if (sender === 'Bot') {
+                messageDiv.innerHTML = formatBotMessage(text);
+            } else {
+                messageDiv.textContent = text;
+            }
+            
+            chatWindow.appendChild(messageDiv);
+            
+            // Trigger reflow to enable transition
+            messageDiv.offsetWidth;
+            messageDiv.classList.add('visible');
+            
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // Function to show thinking indicator
+        function showThinking() {
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.classList.add('chat-message', 'bot', 'thinking');
+            
+            // Create typing animation dots
+            const dotsContainer = document.createElement('div');
+            dotsContainer.classList.add('typing-dots');
+            for (let i = 0; i < 3; i++) {
+                const dot = document.createElement('span');
+                dot.classList.add('dot');
+                dotsContainer.appendChild(dot);
+            }
+            
+            thinkingDiv.appendChild(dotsContainer);
+            chatWindow.appendChild(thinkingDiv);
+            
+            // Trigger reflow to enable transition
+            thinkingDiv.offsetWidth;
+            thinkingDiv.classList.add('visible');
+            
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            return thinkingDiv;
+        }
+
+        // Function to convert links to clickable text
+        function convertLinksToClickable(text) {
+            // URL regex pattern
+            const urlPattern = /(https?:\/\/[^\s]+)/g;
+            return text.replace(urlPattern, '<a href="$1" target="_blank">اضغط هنا</a>');
+        }
+
+        // Function to add a message to the chat
+        function addMessage(message, isUser = false) {
+            const chatWindow = document.getElementById('chatWindow');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isUser ? 'user' : 'bot'}`;
+            
+            // Format bot messages with bold text and links
+            if (!isUser) {
+                message = formatBotMessage(message);
+            }
+            
+            messageDiv.innerHTML = message;
+            chatWindow.appendChild(messageDiv);
+            
+            // Add visible class after a small delay for animation
+            setTimeout(() => messageDiv.classList.add('visible'), 100);
+            
+            // Scroll to bottom
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // Function to disable input while bot is thinking
+        function setInputState(disabled) {
+            userMessageInput.disabled = disabled;
+            sendButton.disabled = disabled;
+            reopenSuggestionsButton.disabled = disabled;
+            
+            if (disabled) {
+                userMessageInput.placeholder = "انتظر رد المساعد...";
+                sendButton.classList.add('disabled');
+                reopenSuggestionsButton.classList.add('disabled');
+            } else {
+                userMessageInput.placeholder = "اكتب رسالتك هنا...";
+                sendButton.classList.remove('disabled');
+                reopenSuggestionsButton.classList.remove('disabled');
+            }
+        }
+
+        // Add countdown timer function
+        function startCooldownTimer(cooldownUntil) {
+            const timerDisplay = document.getElementById('cooldownTimer');
+            const userMessageInput = document.getElementById('userMessage');
+            const sendButton = document.getElementById('sendButton');
+            
+            timerDisplay.style.display = 'block';
+            userMessageInput.disabled = true;
+            sendButton.disabled = true;
+            
+            const updateTimer = () => {
+                const now = new Date().getTime();
+                const timeLeft = cooldownUntil - now;
+                
+                if (timeLeft <= 0) {
+                    timerDisplay.style.display = 'none';
+                    userMessageInput.disabled = false;
+                    sendButton.disabled = false;
+                    userMessageInput.placeholder = 'اكتب رسالتك هنا...';
+                    clearInterval(timer);
+                    return;
+                }
+                
+                const minutes = Math.ceil(timeLeft / (1000 * 60));
+                let timeWord;
+                if (minutes === 1) {
+                    timeWord = 'دقيقة';
+                } else if (minutes === 2) {
+                    timeWord = 'دقيقتين';
+                } else if (minutes >= 3 && minutes <= 10) {
+                    timeWord = 'دقائق';
+                } else {
+                    timeWord = 'دقيقة';
+                }
+                timerDisplay.textContent = `عليك الانتظار ${minutes} ${timeWord} قبل إرسال رسالة جديدة`;
+            };
+            
+            updateTimer();
+            const timer = setInterval(updateTimer, 1000);
+        }
+
+        // Update the sendMessage function
+        async function sendMessage(message) {
+            try {
+                // Hide suggestions if they're visible
+                const suggestionsDiv = document.getElementById('suggestions');
+                suggestionsDiv.style.display = 'none';
+                suggestionsDiv.classList.remove('visible');
+
+                if (!message) {
+                    message = userMessageInput.value;
+                }
+
+                if (!message.trim()) return;
+
+                setInputState(true);
+                userMessageInput.value = '';
+
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/public/login.html';
+                    return;
+                }
+
+                // Display user message
+                addMessage(message, true);
+
+                const thinkingIndicator = showThinking();
+
+                const response = await fetch('http://localhost:3000/conversation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        threadId: threadId,
+                        message: message
+                    })
+                });
+
+                if (thinkingIndicator) {
+                    thinkingIndicator.remove();
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.log('Server response:', errorData);
+                    
+                    if (response.status === 429 && errorData.cooldownUntil) {
+                        startCooldownTimer(parseInt(errorData.cooldownUntil));
+                        addMessage('⚠️ ' + errorData.message, false);
+                        return;
+                    }
+                    
+                    addMessage('⚠️ ' + (errorData.message || 'حدث خطأ في إرسال الرسالة'), false);
+                    return;
+                }
+
+                const data = await response.json();
+                addMessage(data.response);
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage('⚠️ حدث خطأ في إرسال الرسالة. يرجى المحاولة مرة أخرى.', false);
+            } finally {
+                setInputState(false);
+            }
+        }
+
+        // Function to handle suggestion selection
+        function selectSuggestion(topic) {
+            // Hide suggestions with smooth transition
+            const suggestionsDiv = document.getElementById('suggestions');
+            suggestionsDiv.style.display = 'none';
+            suggestionsDiv.classList.remove('visible');
+            
+            // Send the selected suggestion as a message
+            sendMessage(topic);
+        }
+
+        // Function to start the chat
+        async function startChat() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/public/login.html';
+                    return;
+                }
+
+                const response = await fetch('http://localhost:3000/start-thread', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to start chat');
+                }
+
+                const data = await response.json();
+                threadId = data.threadId;
+
+                // Enable chat interface
+                userMessageInput.disabled = false;
+                sendButton.disabled = false;
+                startChatBtn.style.display = 'none';
+                userMessageInput.placeholder = 'اكتب رسالتك هنا...';
+                
+                // Show suggestions
+                suggestionsContainer.style.display = 'block';
+                suggestionsContainer.classList.add('visible');
+
+            } catch (error) {
+                console.error('Error starting chat:', error);
+                alert('عذراً، حدث خطأ في بدء المحادثة. يرجى المحاولة مرة أخرى.');
+            }
+        }
+
+        // Update the welcome message
+        function displayWelcomeMessage() {
+            const welcomeMessage = document.createElement('div');
+            welcomeMessage.className = 'welcome-message chat-message bot';
+            welcomeMessage.innerHTML = '<strong>مرحباً بك في دليل المتدرب الذكي!</strong><br>سأكون مساعدك الشخصي للإجابة على استفساراتك حول الأمور المتعلقة بكلية الاتصالات والمعلومات بجدة<br>اضغط على "<span style="color: #2563eb; font-weight: 600; background: rgba(37, 99, 235, 0.1); padding: 2px 8px; border-radius: 4px; display: inline-block; margin: 0 4px;">بدأ المحادثة</span>" لبدأ محادثة جديدة';
+            chatWindow.appendChild(welcomeMessage);
+            
+            // Add visible class immediately for faster appearance
+            welcomeMessage.classList.add('visible');
+        }
+
+        // Call displayWelcomeMessage immediately when page loads
+        displayWelcomeMessage();
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-theme');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+        
+        // Toggle theme function
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            
+            // Toggle icon
+            if (document.body.classList.contains('dark-theme')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+            
+            // Update user email styles for dark theme
+            const userEmail = document.getElementById('userEmail');
+            if (document.body.classList.contains('dark-theme')) {
+                userEmail.style.background = 'var(--container-bg-dark)';
+                userEmail.style.color = 'var(--text-color-dark)';
+            } else {
+                userEmail.style.background = 'var(--container-bg-light)';
+                userEmail.style.color = 'var(--text-color-light)';
+            }
+        });
+
+        // Logout functionality
+        const logoutButton = document.getElementById('logoutButton');
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/public/login.html';
+        });
+
+        // Check auth and display email
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/public/login.html';
+        } else {
+            fetch('http://localhost:3000/auth/user-info', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('userEmail').querySelector('span').textContent = data.email;
+                // Update styles for dark theme if needed
+                if (document.body.classList.contains('dark-theme')) {
+                    const userEmail = document.getElementById('userEmail');
+                    userEmail.style.background = 'var(--container-bg-dark)';
+                    userEmail.style.color = 'var(--text-color-dark)';
+                }
+            })
+            .catch(() => {
+                window.location.href = '/public/login.html';
+            });
+        }
+
+        // Add event listener for suggestions button
+        reopenSuggestionsButton.addEventListener('click', () => {
+            if (!threadId) {
+                alert('Please click "ابدأ المحادثة" first to start the chat.');
+                return;
+            }
+            const suggestionsDiv = document.getElementById('suggestions');
+            createSuggestionButtons(); // Refresh suggestions when showing
+            suggestionsDiv.style.display = suggestionsDiv.style.display === 'none' ? 'block' : 'none';
+            if (suggestionsDiv.style.display === 'block') {
+                suggestionsDiv.classList.add('visible');
+                chatWindow.scrollTop = 0;
+            } else {
+                suggestionsDiv.classList.remove('visible');
+            }
+        });
+
+        // Event Listeners
+        startChatBtn.addEventListener('click', startChat);
+        
+        sendButton.addEventListener('click', () => {
+            if (!threadId) {
+                alert('Please click "ابدأ المحادثة" first to start the chat.');
+                return;
+            }
+            const message = userMessageInput.value.trim();
+            if (message) sendMessage(message);
+        });
+
+        userMessageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (!threadId) {
+                    alert('Please click "ابدأ المحادثة" first to start the chat.');
+                    return;
+                }
+                const message = userMessageInput.value.trim();
+                if (message) sendMessage(message);
+            }
+        });
+
+        // Initial creation of suggestion buttons
+        createSuggestionButtons();
+    </script>
+</body>
+</html>

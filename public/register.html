@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل حساب جديد - المساعد الذكي للتدريب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #e8f1ff, #c7d9f9);
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --text-color: #1a365d;
+            --border-color: rgba(59, 130, 246, 0.2);
+            --button-gradient: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Tajawal', 'Open Sans', sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--container-bg);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .card-body {
+            padding: 2.5rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-color);
+            font-family: 'Tajawal', 'Open Sans', sans-serif;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
+            border-color: #2563eb;
+        }
+
+        .btn-primary {
+            background: var(--button-gradient);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+            font-family: 'Tajawal', 'Open Sans', sans-serif;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: none;
+            font-family: 'Tajawal', 'Open Sans', sans-serif;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        #smart-chat {
+            text-align: center;
+            color: var(--text-color);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            background: linear-gradient(to right, #1a365d, #2563eb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-body h2 {
+            color: #2d3748;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 0.5rem;
+            font-size: 1.2em;
+        }
+
+        .card-body h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--button-gradient);
+            border-radius: 2px;
+        }
+
+        .password-hint {
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-4 p-md-5">
+                        <h1 id="smart-chat" style="font-size: 1.8em;">دليل المتدرب الذكي</h1>
+                        <h2 class="text-center mb-4">تسجيل حساب جديد</h2>
+                        <div class="alert" id="messageAlert" role="alert"></div>
+                        <form id="registerForm">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">البريد الإلكتروني</label>
+                                <input type="email" class="form-control text-end" id="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">كلمة المرور</label>
+                                <input type="password" class="form-control text-end" id="password" required>
+                                <div class="password-hint">يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">تأكيد كلمة المرور</label>
+                                <input type="password" class="form-control text-end" id="confirmPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">تسجيل</button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p>لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const registerForm = document.getElementById('registerForm');
+        const messageAlert = document.getElementById('messageAlert');
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Password validation
+            if (password.length < 6) {
+                messageAlert.textContent = 'يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل';
+                messageAlert.className = 'alert alert-danger';
+                messageAlert.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                messageAlert.textContent = 'كلمات المرور غير متطابقة';
+                messageAlert.className = 'alert alert-danger';
+                messageAlert.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageAlert.textContent = 'تم التسجيل بنجاح! جاري تحويلك لصفحة تسجيل الدخول...';
+                    messageAlert.className = 'alert alert-success';
+                    messageAlert.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    messageAlert.textContent = data.message === 'Email already exists' ? 
+                        'البريد الإلكتروني مسجل بالفعل' : 'حدث خطأ في التسجيل';
+                    messageAlert.className = 'alert alert-danger';
+                    messageAlert.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                messageAlert.textContent = 'حدث خطأ في الاتصال بالخادم';
+                messageAlert.className = 'alert alert-danger';
+                messageAlert.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
