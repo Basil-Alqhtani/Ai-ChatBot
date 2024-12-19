@@ -6,6 +6,11 @@ This AI-powered openAI assistant chatbot is trained to provide accurate informat
 ![UI sign in ](https://github.com/user-attachments/assets/97442609-cf7d-4a77-899b-efd960194b1a)
 ![UI](https://github.com/user-attachments/assets/bb888662-6c3b-4c86-ba69-c5c21d0f53ae)
 ![UI dark](https://github.com/user-attachments/assets/ab5f5a91-66ef-4c94-b7e8-c6c0959afcee)
+
+
+### Video showcaseing chatbot and some of its features 
+
+### https://youtu.be/SEVi5znsW-U 
 ##بالعربي  
 
 ### 1. Clone the Repository
