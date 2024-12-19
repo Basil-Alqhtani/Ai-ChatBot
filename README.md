@@ -61,18 +61,18 @@ npm start
 
 1. Go to Assistant settings → Instructions section 
 
-2. Copy and paste your system instructions in the 
+2. Copy and paste your system instructions in the model_training/instructions.txt
 
 3. Click "Save"
 
 
 ### 3 Add Knowledge Base
 
-1. Navigate to Knowledge section
+1. Navigate to tools under the file search turn it on 
 
-2. Click "Add knowledge"
+2. Click " + files "
 
-3. Upload your project files
+3. Upload your Knowledge Base files that can be found in model_training/knowledge
 
 4.  Wait for processing to complete
 
