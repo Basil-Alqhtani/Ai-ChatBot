@@ -57,6 +57,26 @@ npm start
    - Create a new Assistant
    - Note down the Assistant ID
 
+### 3. Train the assistant in the knowledge 
+
+1. Go to Assistant settings → Instructions section 
+
+2. Copy and paste your system instructions in the 
+
+3. Click "Save"
+
+
+### 3 Add Knowledge Base
+
+1. Navigate to Knowledge section
+
+2. Click "Add knowledge"
+
+3. Upload your project files
+
+4.  Wait for processing to complete
+
+
 ## 🛠 Model Flexibility
 
 In `server.js`, you can easily change the AI model by modifying the OpenAI configuration:
