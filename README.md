@@ -67,7 +67,7 @@ npm start
 3. Click "Save"
 
 
-### 3 Add Knowledge Base
+### 4 Add Knowledge Base
 
 1. Navigate to tools under the file search turn it on 
 
@@ -266,7 +266,18 @@ npm start
 5. أنشئ مساعدًا (Assistant):
    - انتقل إلى [OpenAI Assistants](https://platform.openai.com/assistants)  
    - أنشئ مساعدًا جديدًا  
-   - احفظ معرف المساعد (Assistant ID).  
+   - احفظ معرف المساعد (Assistant ID).
+   - ### 3. تدريب المساعد على المعرفة  
+1. انتقل إلى إعدادات المساعد → قسم التعليمات  
+2. انسخ والصق تعليمات النظام من [instructions.txt](model_training/instructions.txt)  
+3. اضغط "حفظ"  
+
+### 4. إضافة قاعدة المعرفة  
+1. انتقل إلى الأدوات تحت خيار البحث في الملفات وقم بتفعيله  
+2. اضغط على " + ملفات "  
+3. قم برفع ملفات قاعدة المعرفة الموجودة في [knowledge](model_training/knowledge)  
+4. انتظر حتى تكتمل المعالجة  
+ 
 
 ---
 
