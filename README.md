@@ -3,6 +3,9 @@ This AI-powered openAI assistant chatbot is trained to provide accurate informat
 
 # Smart Chat - Full-Stack AI Chatbot Application
 
+[sign in Page](ui_sign_in.png)
+[FrontPage](UI.png)
+[Dark mode ](UI_dark.png)
 
 ##بالعربي  
 
