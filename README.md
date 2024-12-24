@@ -1,4 +1,4 @@
-# Ai-ChatBot
+# STA chatBot
 This AI-powered openAI assistant chatbot is trained to provide accurate information and answer questions about the College of Telecom and Information in Jeddah. It understands natural language and interacts seamlessly, offering a human-like conversational experience.
 
 # Smart Chat - Full-Stack AI Chatbot Application
@@ -191,6 +191,32 @@ This is a full-stack AI chatbot application built with Node.js, Express, MongoDB
 ## 🛡 Message Limit
 
 The application implements a message limit middleware to prevent abuse. Users are restricted in the number of messages they can send within a specific timeframe.
+
+To modify message limits in this code:
+
+1. Navigate to the `middleware` folder
+2. Open `checkmessagelimit.js` file
+
+Key changes:
+
+1. Change message count limit:
+```javascript
+if (userLimit.messageCount >= 10) { // Change 10 to desired message limit
+```
+
+2. Modify cooldown duration:
+```javascript
+userLimit.cooldownUntil = new Date(currentTime.getTime() + (5 * 60 * 1000)); // Change 5 to desired minutes
+```
+
+3. Update cooldown message:
+```javascript
+const limitMessage = 'Message limit exceeded. Please wait 5 minutes'; // Update text and number
+```
+
+Remember to update all related numbers consistently across the code when making changes.
+
+These changes will update the rate limiting behavior in your GitHub repository after committing and pushing the changes.
 
 ## 🔍 Project Structure
 
