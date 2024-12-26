@@ -53,6 +53,8 @@ npm start
    - Note down your username and password
 5. Set up network access:
    - Whitelist your IP address or choose "Access from Anywhere" for development
+6- get the URL to connect the mongoDB to the .env file
+  connection string in your application
 
 ### 2. OpenAI Account Setup
 1. Visit [OpenAI Platform](https://platform.openai.com/signup)
